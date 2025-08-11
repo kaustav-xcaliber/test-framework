@@ -1,0 +1,87 @@
+[
+  {
+    "lineage": "HL7",
+    "admit_source": null,
+    "reason": null,
+    "batch_id": "1c07837f-3a07-4e9c-b501-47f604034679",
+    "patient_class": "OUTPATIENT",
+    "recorded_datetime": null,
+    "total_payments": null,
+    "rating": null,
+    "admission_type": null,
+    "account_status": null,
+    "discharge_disposition": null,
+    "type": "A08",
+    "xc_visit_id": "096076481",
+    "total_charges": null,
+    "ambulatory_status": null,
+    "datetime": "2024-12-03 17:50:50",
+    "patient_type": null,
+    "preadmit_number": null,
+    "preadmit_test_indicator": null,
+    "alternate_visit_id": "096076481",
+    "admit_datetime": "2024-12-03 17:50:46",
+    "encounter_id": "84461ddb-b822-5946-bf23-ca0da343b1d3",
+    "visit_indicator": null,
+    "bed_status": null,
+    "bedside_datetime": "2024-12-03 17:50:50",
+    "discharge_datetime": null,
+    "servicing_facility": "LKE",
+    "diet_type": null,
+    "message_type": "ADT",
+    "discharged_to_location": null,
+    "total_adjustments": null,
+    "visit_number": "10800050497",
+    "hospital_service": "Not assigned.",
+    "financial_class": null,
+    "readmission_indicator": null,
+    "patient_id": "6efad10a-c887-319c-81ca-c6cc0b38bcf2",
+    "bundle_id": "280B4CA2_ADT",
+    "current_patient_balance": null,
+    "facility": "6a2ef1fb-2dc4-5671-b881-6bffb5820258",
+    "insurance": [
+      {
+        "insurance_company_id": "10001",
+        "insurance_company_name": null,
+        "id_type": "BLUE CROSS PPO TRUST",
+        "id_type_code": "10001011"
+      }
+    ],
+    "providers": [
+      {
+        "provider_type": "referrer",
+        "report_grouper_twelve": null,
+        "provider_id": "1093712093",
+        "prov_cred": null
+      },
+      {
+        "provider_type": "referrer",
+        "report_grouper_twelve": null,
+        "provider_id": "H24809",
+        "prov_cred": null
+      },
+      {
+        "provider_type": "attender",
+        "report_grouper_twelve": null,
+        "provider_id": "H24809",
+        "prov_cred": null
+      },
+      {
+        "provider_type": "attender",
+        "report_grouper_twelve": null,
+        "provider_id": "1093712093",
+        "prov_cred": null
+      }
+    ],
+    "facilities": [
+      {
+        "bed": null,
+        "point_of_care": "1060170018:HFM:MOP LAB:PATHOLOGY",
+        "description": null,
+        "facility_type": "Assigned Patient Location",
+        "facility_code": "LKE",
+        "room": null
+      }
+    ]
+  }
+]

@@ -1,0 +1,1328 @@
+openapi: 3.0.3
+info:
+  title: API Test Framework
+  description: |
+    A comprehensive API testing framework that allows you to create, manage, and execute API tests.
+    Features include service management, test case creation from curl commands, automated test execution,
+    and detailed reporting with assertions.
+  version: 1.0.0
+  contact:
+    name: API Test Framework Team
+    email: support@apitestframework.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Services
+    description: Service management operations
+  - name: Tests
+    description: Test case management operations
+  - name: Test Runs
+    description: Test execution and results
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Check if the API server is running
+      responses:
+        "200":
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  message:
+                    type: string
+                    example: "API Test Framework is running"
+
+  /health/db:
+    get:
+      tags:
+        - Health
+      summary: Database health check
+      description: Check if the database connection is healthy
+      responses:
+        "200":
+          description: Database is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  message:
+                    type: string
+                    example: "Database is healthy"
+        "500":
+          description: Database connection failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                database_error:
+                  summary: Database connection error
+                  value:
+                    error: "Database connection failed"
+                    message: "Unable to connect to the database"
+                    code: "DATABASE_CONNECTION_ERROR"
+                    details:
+                      timestamp: "2025-08-11T13:20:03Z"
+                      error_type: "connection_timeout"
+
+  /health/redis:
+    get:
+      tags:
+        - Health
+      summary: Redis health check
+      description: Check if the Redis connection is healthy
+      responses:
+        "200":
+          description: Redis is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  message:
+                    type: string
+                    example: "Redis is healthy"
+        "500":
+          description: Redis connection failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                redis_error:
+                  summary: Redis connection error
+                  value:
+                    error: "Redis connection failed"
+                    message: "Unable to connect to Redis"
+                    code: "REDIS_CONNECTION_ERROR"
+                    details:
+                      timestamp: "2025-08-11T13:20:03Z"
+                      error_type: "connection_timeout"
+
+  /api/v1/services:
+    get:
+      tags:
+        - Services
+      summary: List services
+      description: Retrieve a paginated list of all services
+      parameters:
+        - name: limit
+          in: query
+          description: Number of services to return (default 10, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: offset
+          in: query
+          description: Number of services to skip (default 0)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        "200":
+          description: List of services retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Service"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+              examples:
+                success:
+                  summary: Services retrieved successfully
+                  value:
+                    data:
+                      - id: "550e8400-e29b-41d4-a716-446655440000"
+                        name: "query-lambda"
+                        description: "Query Lambda"
+                        base_url: "http://localhost:3001"
+                        auth_config:
+                          type: "bearer"
+                          token: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        created_at: "2025-08-11T13:06:35Z"
+                        updated_at: "2025-08-11T13:06:35Z"
+                    meta:
+                      total: 1
+                      limit: 10
+                      offset: 0
+                      page: 1
+                      total_pages: 1
+
+    post:
+      tags:
+        - Services
+      summary: Create service
+      description: Create a new service with the provided details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - base_url
+              properties:
+                name:
+                  type: string
+                  description: Name of the service
+                  example: "query-lambda"
+                base_url:
+                  type: string
+                  description: Base URL of the service
+                  example: "http://localhost:3001"
+                description:
+                  type: string
+                  description: Optional description of the service
+                  example: "Query Lambda"
+                auth_config:
+                  $ref: "#/components/schemas/AuthConfig"
+      responses:
+        "201":
+          description: Service created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+              examples:
+                success:
+                  summary: Service created successfully
+                  value:
+                    id: "550e8400-e29b-41d4-a716-446655440000"
+                    name: "query-lambda"
+                    description: "Query Lambda"
+                    base_url: "http://localhost:3001"
+                    auth_config:
+                      type: "bearer"
+                      token: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ4Y2FsaWJlci1oZWFsdGguc2VydmljZS1hY2NvdW50LmlkIjoiNTFmNjg5M2EtMmZkZi00NDE3LWEzODUtOGEzOTlmYWRjNWUzIiwieGNhbGliZXItaGVhbHRoLmFjY291bnQuaWQiOiI5MWI1YzdlMy02NmQxLTRiMGMtODRmZC0yYzZjYjVjZjgzZmMiLCJ4Y2FsaWJlci1oZWFsdGguaW5zdGFuY2UuaWQiOiI5MTcyNmQyOC1lY2QxLTM2ZGYtODEzMi02MjdhZTgwZmUzMzIiLCJ1c2VyIjp7InVzZXJJZCI6IjU5MTY4NGJlLWY5YzctNTI0Mi04Y2M0LTc2Yzk4NjYxMTgzMyIsInVzZXJOYW1lIjoiS2F1c3RhdiBLYXJhbiJ9LCJ4Y2FsaWJlci1oZWFsdGguc2NvcGVzIjpbIjkxNzI2ZDI4LWVjZDEtMzZkZi04MTMyLTYyN2FlODBmZTMzMi4qIl0sImNsYWltcyI6WyIqOioiXSwiZ3JhbnRUeXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwiaXNzdWVyVXJsIjoiaHR0cDovL2JsaXR6LnhjYWxpYmVyYXBpcy5jb20vYXBpL3YxL2F1dGgvdG9rZW5WMiIsImV4cGlyeUF0IjoiMjAyNi0wNi0zMCIsInhjYWxpYmVyLWhlYWx0aC50ZW5hbnQuaWQiOiI1MTJmZTE2Yi01N2NjLTM4ODctYjI4Zi04MjlmMjFhYTllZjIiLCJpYXQiOjE3NTM5NDg0ODMsImV4cCI6MTc4MjgwNjA4M30.YA34FxhSA3WvdDrMpU35X2wChSch5DhnKEt84Lt6svIRnf4zNalz8RcPPcVYUSgR7nYbZdGdYWQ3F7yZx9MobMvJJnqwgfxMxzMyYmCtPHMu4Rp6_hAU1hUnYwsch2XFY1VgSLgvDjoehZ8wlrnMICdKZL0CYCCxlfbblFbdBUG-81su2Hp435YHGjQYwCwwM0e7aZSPK6gNBUF9Bp4BgxKU1ce3BfCLdkiUCXf8QZSqeoyTTHhQ0YThxkQpAhtWdOHTIq545IWezHqt8Yjmjm3ZpEJK4PDZeuQPsSSJ2eoB5vuTneb3HoB0h_8InfrOlqKnLwil2axPE5YVtWxaQQ"
+                    created_at: "2025-08-11T13:06:35Z"
+                    updated_at: "2025-08-11T13:06:35Z"
+        "400":
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                validation_error:
+                  summary: Validation error
+                  value:
+                    error: "Invalid request data"
+                    message: "The provided data does not meet validation requirements"
+                    code: "VALIDATION_ERROR"
+                    details:
+                      field: "base_url"
+                      issue: "URL must be a valid HTTP/HTTPS URL"
+
+  /api/v1/services/{id}:
+    get:
+      tags:
+        - Services
+      summary: Get service
+      description: Retrieve a specific service by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Service ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Service retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+              examples:
+                success:
+                  summary: Service retrieved successfully
+                  value:
+                    id: "550e8400-e29b-41d4-a716-446655440000"
+                    name: "query-lambda"
+                    description: "Query Lambda"
+                    base_url: "http://localhost:3001"
+                    auth_config:
+                      type: "bearer"
+                      token: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ4Y2FsaWJlci1oZWFsdGguc2VydmljZS1hY2NvdW50LmlkIjoiNTFmNjg5M2EtMmZkZi00NDE3LWEzODUtOGEzOTlmYWRjNWUzIiwieGNhbGliZXItaGVhbHRoLmFjY291bnQuaWQiOiI5MWI1YzdlMy02NmQxLTRiMGMtODRmZC0yYzZjYjVjZjgzZmMiLCJ4Y2FsaWJlci1oZWFsdGguaW5zdGFuY2UuaWQiOiI5MTcyNmQyOC1lY2QxLTM2ZGYtODEzMi02MjdhZTgwZmUzMzIiLCJ1c2VyIjp7InVzZXJJZCI6IjU5MTY4NGJlLWY5YzctNTI0Mi04Y2M0LTc2Yzk4NjYxMTgzMyIsInVzZXJOYW1lIjoiS2F1c3RhdiBLYXJhbiJ9LCJ4Y2FsaWJlci1oZWFsdGguc2NvcGVzIjpbIjkxNzI2ZDI4LWVjZDEtMzZkZi04MTMyLTYyN2FlODBmZTMzMi4qIl0sImNsYWltcyI6WyIqOioiXSwiZ3JhbnRUeXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwiaXNzdWVyVXJsIjoiaHR0cDovL2JsaXR6LnhjYWxpYmVyYXBpcy5jb20vYXBpL3YxL2F1dGgvdG9rZW5WMiIsImV4cGlyeUF0IjoiMjAyNi0wNi0zMCIsInhjYWxpYmVyLWhlYWx0aC50ZW5hbnQuaWQiOiI1MTJmZTE2Yi01N2NjLTM4ODctYjI4Zi04MjlmMjFhYTllZjIiLCJpYXQiOjE3NTM5NDg0ODMsImV4cCI6MTc4MjgwNjA4M30.YA34FxhSA3WvdDrMpU35X2wChSch5DhnKEt84Lt6svIRnf4zNalz8RcPPcVYUSgR7nYbZdGdYWQ3F7yZx9MobMvJJnqwgfxMxzMyYmCtPHMu4Rp6_hAU1hUnYwsch2XFY1VgSLgvDjoehZ8wlrnMICdKZL0CYCCxlfbblFbdBUG-81su2Hp435YHGjQYwCwwM0e7aZSPK6gNBUF9Bp4BgxKU1ce3BfCLdkiUCXf8QZSqeoyTTHhQ0YThxkQpAhtWdOHTIq545IWezHqt8Yjmjm3ZpEJK4PDZeuQPsSSJ2eoB5vuTneb3HoB0h_8InfrOlqKnLwil2axPE5YVtWxaQQ"
+                    created_at: "2025-08-11T13:06:35Z"
+                    updated_at: "2025-08-11T13:06:35Z"
+        "404":
+          description: Service not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                service_not_found:
+                  summary: Service not found error
+                  value:
+                    error: "Service not found"
+                    message: "The requested service could not be found in the database"
+                    code: "SERVICE_NOT_FOUND"
+                    details:
+                      service_id: "550e8400-e29b-41d4-a716-446655440000"
+                      timestamp: "2025-08-11T13:20:03Z"
+
+    put:
+      tags:
+        - Services
+      summary: Update service
+      description: Update an existing service with new details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Service ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the service
+                base_url:
+                  type: string
+                  description: Base URL of the service
+                description:
+                  type: string
+                  description: Description of the service
+                auth_config:
+                  $ref: "#/components/schemas/AuthConfig"
+      responses:
+        "200":
+          description: Service updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+        "400":
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Service not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags:
+        - Services
+      summary: Delete service
+      description: Delete a service by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Service ID
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Service deleted successfully
+        "404":
+          description: Service not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/tests:
+    get:
+      tags:
+        - Tests
+      summary: List tests
+      description: Retrieve a paginated list of all test cases
+      parameters:
+        - name: limit
+          in: query
+          description: Number of tests to return (default 10, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: offset
+          in: query
+          description: Number of tests to skip (default 0)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: service_id
+          in: query
+          description: Filter tests by service ID
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: List of tests retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TestCase"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+              examples:
+                success:
+                  summary: Tests retrieved successfully
+                  value:
+                    data:
+                      - id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                        name: "Encounter State By Alternate Visit Number"
+                        description: "Good Path Test of Encounter State By Alternate Visit Number"
+                        service_id: "550e8400-e29b-41d4-a716-446655440000"
+                        test_spec:
+                          method: "POST"
+                          url: "/get_encounter_state_by_alternate_visit_number/execute"
+                          headers:
+                            Content-Type: "application/json"
+                            Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+                          body: '{"alternate_visit_number": "096076481"}'
+                        created_at: "2025-08-11T13:06:35Z"
+                        updated_at: "2025-08-11T13:06:35Z"
+                    meta:
+                      total: 1
+                      limit: 10
+                      offset: 0
+                      page: 1
+                      total_pages: 1
+
+    post:
+      tags:
+        - Tests
+      summary: Create test
+      description: Create a new test case with the provided details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - service_id
+                - test_spec
+              properties:
+                name:
+                  type: string
+                  description: Name of the test case
+                  example: "Get User Profile"
+                description:
+                  type: string
+                  description: Description of the test case
+                  example: "Test retrieving user profile information"
+                service_id:
+                  type: string
+                  format: uuid
+                  description: ID of the service this test belongs to
+                  example: "550e8400-e29b-41d4-a716-446655440000"
+                test_spec:
+                  $ref: "#/components/schemas/TestSpec"
+      responses:
+        "201":
+          description: Test case created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestCase"
+              examples:
+                success:
+                  summary: Test created successfully
+                  value:
+                    id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                    name: "Get User Test"
+                    description: "Test to get user by ID"
+                    service_id: "550e8400-e29b-41d4-a716-446655440000"
+                    test_spec:
+                      method: "GET"
+                      url: "/users/1"
+                      headers:
+                        Content-Type: "application/json"
+                      assertions:
+                        [
+                          { type: "status_code", expected_value: 200 },
+                          {
+                            type: "json_path",
+                            field: "$.id",
+                            operator: "exists",
+                          },
+                          {
+                            type: "json_path",
+                            field: "$.name",
+                            operator: "equals",
+                            expected_value: "Leanne Graham",
+                          },
+                        ]
+                    created_at: "2025-08-11T13:06:35Z"
+                    updated_at: "2025-08-11T13:06:35Z"
+        "400":
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/tests/from-curl:
+    post:
+      tags:
+        - Tests
+      summary: Create test from curl command
+      description: Create a new test case by parsing a curl command
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CurlImportRequest"
+      responses:
+        "201":
+          description: Test case created successfully from curl command
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestCase"
+        "400":
+          description: Invalid curl command or request data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/tests/{id}:
+    get:
+      tags:
+        - Tests
+      summary: Get test
+      description: Retrieve a specific test case by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test case ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Test case retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestCase"
+              examples:
+                success:
+                  summary: Test case retrieved successfully
+                  value:
+                    id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                    name: "Encounter State By Alternate Visit Number"
+                    description: "Good Path Test of Encounter State By Alternate Visit Number"
+                    service_id: "550e8400-e29b-41d4-a716-446655440000"
+                    test_spec:
+                      method: "POST"
+                      url: "/get_encounter_state_by_alternate_visit_number/execute"
+                      headers:
+                        Content-Type: "application/json"
+                        Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      body: '{"alternate_visit_number": "096076481"}'
+                      assertions:
+                        - type: "status_code"
+                          expected_value: 201
+                        - type: "json_path"
+                          field: "[0].visit_number"
+                          operator: "exists"
+                        - type: "json_path"
+                          field: "[0].visit_number"
+                          operator: "equals"
+                          expected_value: "10800050497"
+                    created_at: "2025-08-11T13:06:35Z"
+                    updated_at: "2025-08-11T13:06:35Z"
+        "404":
+          description: Test case not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      tags:
+        - Tests
+      summary: Update test
+      description: Update an existing test case with new details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test case ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the test case
+                description:
+                  type: string
+                  description: Description of the test case
+                service_id:
+                  type: string
+                  format: uuid
+                  description: ID of the service this test belongs to
+                test_spec:
+                  $ref: "#/components/schemas/TestSpec"
+      responses:
+        "200":
+          description: Test case updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestCase"
+        "400":
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Test case not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags:
+        - Tests
+      summary: Delete test
+      description: Delete a test case by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test case ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Test case deleted successfully
+        "404":
+          description: Test case not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/test-runs:
+    get:
+      tags:
+        - Test Runs
+      summary: List test runs
+      description: Retrieve a paginated list of all test runs
+      parameters:
+        - name: limit
+          in: query
+          description: Number of test runs to return (default 10, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: offset
+          in: query
+          description: Number of test runs to skip (default 0)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: status
+          in: query
+          description: Filter test runs by status
+          required: false
+          schema:
+            type: string
+            enum: [PENDING, RUNNING, COMPLETED, FAILED]
+      responses:
+        "200":
+          description: List of test runs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TestRun"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+              examples:
+                success:
+                  summary: Test runs retrieved successfully
+                  value:
+                    data:
+                      - id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                        test_id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                        status: "COMPLETED"
+                        environment: "staging"
+                        started_at: "2025-08-11T13:06:35Z"
+                        completed_at: "2025-08-11T13:06:40Z"
+                        duration_ms: 5000
+                        created_at: "2025-08-11T13:06:35Z"
+                        updated_at: "2025-08-11T13:06:40Z"
+                    meta:
+                      total: 1
+                      limit: 10
+                      offset: 0
+                      page: 1
+                      total_pages: 1
+
+    post:
+      tags:
+        - Test Runs
+      summary: Start test run
+      description: Start executing a test case
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - test_id
+              properties:
+                test_id:
+                  type: string
+                  format: uuid
+                  description: ID of the test case to execute
+                  example: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                environment:
+                  type: string
+                  description: Environment to run the test in
+                  example: "staging"
+                variables:
+                  type: object
+                  description: Environment variables for the test run
+                  additionalProperties: true
+      responses:
+        "201":
+          description: Test run started successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestRun"
+              examples:
+                success:
+                  summary: Test run started successfully
+                  value:
+                    id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                    test_id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                    status: "RUNNING"
+                    environment: "staging"
+                    variables:
+                      base_url: "http://localhost:3001"
+                      timeout: "30"
+                    started_at: "2025-08-11T13:06:35Z"
+                    created_at: "2025-08-11T13:06:35Z"
+                    updated_at: "2025-08-11T13:06:35Z"
+        "400":
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Test case not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/test-runs/{id}:
+    get:
+      tags:
+        - Test Runs
+      summary: Get test run
+      description: Retrieve a specific test run by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test run ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Test run retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestRun"
+              examples:
+                success:
+                  summary: Test run retrieved successfully
+                  value:
+                    id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                    test_id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                    status: "COMPLETED"
+                    environment: "staging"
+                    variables:
+                      base_url: "http://localhost:3001"
+                      timeout: "30"
+                    started_at: "2025-08-11T13:06:35Z"
+                    completed_at: "2025-08-11T13:06:40Z"
+                    duration_ms: 5000
+                    created_at: "2025-08-11T13:06:35Z"
+                    updated_at: "2025-08-11T13:06:40Z"
+        "404":
+          description: Test run not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/test-runs/{id}/results:
+    get:
+      tags:
+        - Test Runs
+      summary: Get test results
+      description: Retrieve detailed results for a specific test run
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Test run ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Test results retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  test_run:
+                    $ref: "#/components/schemas/TestRun"
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TestResult"
+              examples:
+                success:
+                  summary: Test results retrieved successfully
+                  value:
+                    test_run:
+                      id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                      test_id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+                      status: "COMPLETED"
+                      environment: "staging"
+                      started_at: "2025-08-11T13:06:35Z"
+                      completed_at: "2025-08-11T13:06:40Z"
+                      duration_ms: 5000
+                    results:
+                      [
+                        {
+                          id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e",
+                          test_run_id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e",
+                          assertion_type: "status_code",
+                          status: "PASSED",
+                          expected_value: "201",
+                          actual_value: "201",
+                          execution_time_ms: 45,
+                        },
+                        {
+                          id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e",
+                          test_run_id: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e",
+                          assertion_type: "json_path",
+                          assertion_description: "Visit number should exist",
+                          status: "PASSED",
+                          field: "[0].visit_number",
+                          operator: "exists",
+                          execution_time_ms: 32,
+                        },
+                      ]
+        "404":
+          description: Test run not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    Service:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the service
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          description: Name of the service
+          example: "query-lambda"
+        base_url:
+          type: string
+          description: Base URL of the service
+          example: "http://localhost:3001"
+        description:
+          type: string
+          description: Description of the service
+          example: "Query Lambda"
+        auth_config:
+          $ref: "#/components/schemas/AuthConfig"
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the service was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the service was last updated
+      required:
+        - id
+        - name
+        - base_url
+
+    AuthConfig:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [NONE, BASIC, BEARER, API_KEY]
+          description: Type of authentication
+          example: "bearer"
+        username:
+          type: string
+          description: Username for basic auth
+          example: "user@example.com"
+        password:
+          type: string
+          description: Password for basic auth
+          example: "password123"
+        token:
+          type: string
+          description: Bearer token or API key
+          example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ4Y2FsaWJlci1oZWFsdGguc2VydmljZS1hY2NvdW50LmlkIjoiNTFmNjg5M2EtMmZkZi00NDE3LWEzODUtOGEzOTlmYWRjNWUzIiwieGNhbGliZXItaGVhbHRoLmFjY291bnQuaWQiOiI5MWI1YzdlMy02NmQxLTRiMGMtODRmZC0yYzZjYjVjZjgzZmMiLCJ4Y2FsaWJlci1oZWFsdGguaW5zdGFuY2UuaWQiOiI5MTcyNmQyOC1lY2QxLTM2ZGYtODEzMi02MjdhZTgwZmUzMzIiLCJ1c2VyIjp7InVzZXJJZCI6IjU5MTY4NGJlLWY5YzctNTI0Mi04Y2M0LTc2Yzk4NjYxMTgzMyIsInVzZXJOYW1lIjoiS2F1c3RhdiBLYXJhbiJ9LCJ4Y2FsaWJlci1oZWFsdGguc2NvcGVzIjpbIjkxNzI2ZDI4LWVjZDEtMzZkZi04MTMyLTYyN2FlODBmZTMzMi4qIl0sImNsYWltcyI6WyIqOioiXSwiZ3JhbnRUeXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwiaXNzdWVyVXJsIjoiaHR0cDovL2JsaXR6LnhjYWxpYmVyYXBpcy5jb20vYXBpL3YxL2F1dGgvdG9rZW5WMiIsImV4cGlyeUF0IjoiMjAyNi0wNi0zMCIsInhjYWxpYmVyLWhlYWx0aC50ZW5hbnQuaWQiOiI1MTJmZTE2Yi01N2NjLTM4ODctYjI4Zi04MjlmMjFhYTllZjIiLCJpYXQiOjE3NTM5NDg0ODMsImV4cCI6MTc4MjgwNjA4M30.YA34FxhSA3WvdDrMpU35X2wChSch5DhnKEt84Lt6svIRnf4zNalz8RcPPcVYUSgR7nYbZdGdYWQ3F7yZx9MobMvJJnqwgfxMxzMyYmCtPHMu4Rp6_hAU1hUnYwsch2XFY1VgSLgvDjoehZ8wlrnMICdKZL0CYCCxlfbblFbdBUG-81su2Hp435YHGjQYwCwwM0e7aZSPK6gNBUF9Bp4BgxKU1ce3BfCLdkiUCXf8QZSqeoyTTHhQ0YThxkQpAhtWdOHTIq545IWezHqt8Yjmjm3ZpEJK4PDZeuQPsSSJ2eoB5vuTneb3HoB0h_8InfrOlqKnLwil2axPE5YVtWxaQQ"
+        header_name:
+          type: string
+          description: Custom header name for API key
+          example: "X-API-Key"
+
+    TestCase:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the test case
+          example: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+        name:
+          type: string
+          description: Name of the test case
+          example: "Encounter State By Alternate Visit Number"
+        description:
+          type: string
+          description: Description of the test case
+          example: "Good Path Test of Encounter State By Alternate Visit Number"
+        service_id:
+          type: string
+          format: uuid
+          description: ID of the service this test belongs to
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        test_spec:
+          $ref: "#/components/schemas/TestSpec"
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the test case was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the test case was last updated
+      required:
+        - id
+        - name
+        - service_id
+        - test_spec
+
+    TestSpec:
+      type: object
+      properties:
+        method:
+          type: string
+          enum: [GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS]
+          description: HTTP method for the request
+          example: "POST"
+        url:
+          type: string
+          description: URL path for the request (relative to service base URL)
+          example: "/get_encounter_state_by_alternate_visit_number/execute"
+        path_variables:
+          type: object
+          description: Path variables to substitute in the URL
+          additionalProperties:
+            type: string
+          example:
+            id: "123"
+        query_params:
+          type: object
+          description: Query parameters for the request
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+          example:
+            include: "profile,settings"
+            active: true
+        headers:
+          type: object
+          description: HTTP headers for the request
+          additionalProperties:
+            type: string
+          example:
+            Accept: "application/json"
+            Content-Type: "application/json"
+            Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+        body:
+          type: string
+          description: Request body (for POST, PUT, PATCH requests)
+          example: '{"alternate_visit_number": "096076481"}'
+        assertions:
+          type: array
+          description: Assertions to validate the response
+          items:
+            $ref: "#/components/schemas/AssertionSpec"
+      required:
+        - method
+        - url
+
+    AssertionSpec:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [status_code, json_path, response_time, header, body_contains]
+          description: Type of assertion
+          example: "status_code"
+        field:
+          type: string
+          description: Field to assert on (e.g., JSON path, header name)
+          example: "[0].visit_number"
+        operator:
+          type: string
+          enum:
+            [
+              equals,
+              not_equals,
+              contains,
+              not_contains,
+              exists,
+              not_exists,
+              greater_than,
+              less_than,
+            ]
+          description: Comparison operator
+          example: "equals"
+        expected_value:
+          type: string
+          description: Expected value for the assertion
+          example: "10800050497"
+        description:
+          type: string
+          description: Description of what this assertion validates
+          example: "Visit number should match expected value"
+
+    TestRun:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the test run
+          example: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+        test_id:
+          type: string
+          format: uuid
+          description: ID of the test case being executed
+          example: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+        status:
+          type: string
+          enum: [PENDING, RUNNING, COMPLETED, FAILED]
+          description: Current status of the test run
+          example: "COMPLETED"
+        environment:
+          type: string
+          description: Environment where the test was run
+          example: "staging"
+        variables:
+          type: object
+          description: Environment variables used during the test run
+          additionalProperties: true
+        started_at:
+          type: string
+          format: date-time
+          description: Timestamp when the test run started
+        completed_at:
+          type: string
+          format: date-time
+          description: Timestamp when the test run completed
+        duration_ms:
+          type: integer
+          description: Duration of the test run in milliseconds
+          example: 1250
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the test run was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the test run was last updated
+      required:
+        - id
+        - test_id
+        - status
+
+    TestResult:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the test result
+          example: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+        test_run_id:
+          type: string
+          format: uuid
+          description: ID of the test run this result belongs to
+          example: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+        assertion_id:
+          type: string
+          format: uuid
+          description: ID of the assertion being tested
+          example: "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e"
+        assertion_type:
+          type: string
+          description: Type of assertion that was tested
+          example: "json_path"
+        assertion_description:
+          type: string
+          description: Description of the assertion
+          example: "User name should match expected value"
+        status:
+          type: string
+          enum: [PASSED, FAILED, ERROR]
+          description: Status of the assertion test
+          example: "PASSED"
+        expected_value:
+          type: string
+          description: Expected value for the assertion
+          example: "John Doe"
+        actual_value:
+          type: string
+          description: Actual value received
+          example: "John Doe"
+        error_message:
+          type: string
+          description: Error message if the assertion failed
+          example: "Expected 'John Doe' but got 'Jane Doe'"
+        execution_time_ms:
+          type: integer
+          description: Time taken to execute this assertion in milliseconds
+          example: 45
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the test result was created
+      required:
+        - id
+        - test_run_id
+        - assertion_type
+        - status
+
+    CurlImportRequest:
+      type: object
+      properties:
+        curl_command:
+          type: string
+          description: The curl command to parse
+          example: 'curl --location ''http://localhost:3001/get_encounter_state_by_alternate_visit_number/execute'' --header ''Content-Type: application/json'' --header ''Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...'' --data ''{"alternate_visit_number":"096076481"}'''
+        service_id:
+          type: string
+          format: uuid
+          description: ID of the service this test belongs to
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          description: Name for the generated test case
+          example: "Encounter State By Alternate Visit Number"
+        description:
+          type: string
+          description: Description for the generated test case
+          example: "Good Path Test of Encounter State By Alternate Visit Number"
+      required:
+        - curl_command
+        - service_id
+
+    CurlRequest:
+      type: object
+      properties:
+        method:
+          type: string
+          description: HTTP method extracted from curl command
+          example: "GET"
+        url:
+          type: string
+          description: URL extracted from curl command
+          example: "https://api.example.com/users/123"
+        headers:
+          type: object
+          description: Headers extracted from curl command
+          additionalProperties:
+            type: string
+          example:
+            Authorization: "Bearer token123"
+        body:
+          type: string
+          description: Request body extracted from curl command
+          example: '{"name": "John Doe"}'
+        query_params:
+          type: object
+          description: Query parameters extracted from curl command
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of items
+          example: 150
+        limit:
+          type: integer
+          description: Number of items per page
+          example: 10
+        offset:
+          type: integer
+          description: Number of items skipped
+          example: 0
+        page:
+          type: integer
+          description: Current page number (1-based)
+          example: 1
+        total_pages:
+          type: integer
+          description: Total number of pages
+          example: 15
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Service not found"
+        message:
+          type: string
+          description: Detailed error description
+          example: "The requested service could not be found in the database"
+        code:
+          type: string
+          description: Error code for programmatic handling
+          example: "SERVICE_NOT_FOUND"
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+      required:
+        - error
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []

@@ -1,0 +1,502 @@
+{
+	"info": {
+		"_postman_id": "6ec6aa23-ca6d-406c-870b-708c0e8f7a3e",
+		"name": "API Test Framework",
+		"description": "Complete collection for testing the API Test Framework endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46971183",
+		"_collection_link": "https://telecoms-engineer-92990982-2715846.postman.co/workspace/476b3f8e-047a-4cf3-bde6-7f94b7a8cdd3/collection/46971183-6ec6aa23-ca6d-406c-870b-708c0e8f7a3e?action=share&source=collection_link&creator=46971183"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Services",
+			"item": [
+				{
+					"name": "List Services",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/services?limit=10&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"services"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Service",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"query-lambda\",\n    \"description\": \"Query Lambda\",\n    \"base_url\": \"http://localhost:3001\",\n    \"auth_config\": {\n        \"type\": \"bearer\",\n        \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ4Y2FsaWJlci1oZWFsdGguc2VydmljZS1hY2NvdW50LmlkIjoiNTFmNjg5M2EtMmZkZi00NDE3LWEzODUtOGEzOTlmYWRjNWUzIiwieGNhbGliZXItaGVhbHRoLmFjY291bnQuaWQiOiI5MWI1YzdlMy02NmQxLTRiMGMtODRmZC0yYzZjYjVjZjgzZmMiLCJ4Y2FsaWJlci1oZWFsdGguaW5zdGFuY2UuaWQiOiI5MTcyNmQyOC1lY2QxLTM2ZGYtODEzMi02MjdhZTgwZmUzMzIiLCJ1c2VyIjp7InVzZXJJZCI6IjU5MTY4NGJlLWY5YzctNTI0Mi04Y2M0LTc2Yzk4NjYxMTgzMyIsInVzZXJOYW1lIjoiS2F1c3RhdiBLYXJhbiJ9LCJ4Y2FsaWJlci1oZWFsdGguc2NvcGVzIjpbIjkxNzI2ZDI4LWVjZDEtMzZkZi04MTMyLTYyN2FlODBmZTMzMi4qIl0sImNsYWltcyI6WyIqOioiXSwiZ3JhbnRUeXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwiaXNzdWVyVXJsIjoiaHR0cDovL2JsaXR6LnhjYWxpYmVyYXBpcy5jb20vYXBpL3YxL2F1dGgvdG9rZW5WMiIsImV4cGlyeUF0IjoiMjAyNi0wNi0zMCIsInhjYWxpYmVyLWhlYWx0aC50ZW5hbnQuaWQiOiI1MTJmZTE2Yi01N2NjLTM4ODctYjI4Zi04MjlmMjFhYTllZjIiLCJpYXQiOjE3NTM5NDg0ODMsImV4cCI6MTc4MjgwNjA4M30.YA34FxhSA3WvdDrMpU35X2wChSch5DhnKEt84Lt6svIRnf4zNalz8RcPPcVYUSgR7nYbZdGdYWQ3F7yZx9MobMvJJnqwgfxMxzMyYmCtPHMu4Rp6_hAU1hUnYwsch2XFY1VgSLgvDjoehZ8wlrnMICdKZL0CYCCxlfbblFbdBUG-81su2Hp435YHGjQYwCwwM0e7aZSPK6gNBUF9Bp4BgxKU1ce3BfCLdkiUCXf8QZSqeoyTTHhQ0YThxkQpAhtWdOHTIq545IWezHqt8Yjmjm3ZpEJK4PDZeuQPsSSJ2eoB5vuTneb3HoB0h_8InfrOlqKnLwil2axPE5YVtWxaQQ\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/services",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/services/{{service_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"services",
+								"{{service_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Service",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"query-lambda\",\n    \"description\": \"Query Lambda\",\n    \"base_url\": \"http://localhost:3001\",\n    \"auth_config\": {\n        \"type\": \"bearer\",\n        \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ4Y2FsaWJlci1oZWFsdGguc2VydmljZS1hY2NvdW50LmlkIjoiNTFmNjg5M2EtMmZkZi00NDE3LWEzODUtOGEzOTlmYWRjNWUzIiwieGNhbGliZXItaGVhbHRoLmFjY291bnQuaWQiOiI5MWI1YzdlMy02NmQxLTRiMGMtODRmZC0yYzZjYjVjZjgzZmMiLCJ4Y2FsaWJlci1oZWFsdGguaW5zdGFuY2UuaWQiOiI5MTcyNmQyOC1lY2QxLTM2ZGYtODEzMi02MjdhZTgwZmUzMzIiLCJ1c2VyIjp7InVzZXJJZCI6IjU5MTY4NGJlLWY5YzctNTI0Mi04Y2M0LTc2Yzk4NjYxMTgzMyIsInVzZXJOYW1lIjoiS2F1c3RhdiBLYXJhbiJ9LCJ4Y2FsaWJlci1oZWFsdGguc2NvcGVzIjpbIjkxNzI2ZDI4LWVjZDEtMzZkZi04MTMyLTYyN2FlODBmZTMzMi4qIl0sImNsYWltcyI6WyIqOioiXSwiZ3JhbnRUeXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwiaXNzdWVyVXJsIjoiaHR0cDovL2JsaXR6LnhjYWxpYmVyYXBpcy5jb20vYXBpL3YxL2F1dGgvdG9rZW5WMiIsImV4cGlyeUF0IjoiMjAyNi0wNi0zMCIsInhjYWxpYmVyLWhlYWx0aC50ZW5hbnQuaWQiOiI1MTJmZTE2Yi01N2NjLTM4ODctYjI4Zi04MjlmMjFhYTllZjIiLCJpYXQiOjE3NTM5NDg0ODMsImV4cCI6MTc4MjgwNjA4M30.YA34FxhSA3WvdDrMpU35X2wChSch5DhnKEt84Lt6svIRnf4zNalz8RcPPcVYUSgR7nYbZdGdYWQ3F7yZx9MobMvJJnqwgfxMxzMyYmCtPHMu4Rp6_hAU1hUnYwsch2XFY1VgSLgvDjoehZ8wlrnMICdKZL0CYCCxlfbblFbdBUG-81su2Hp435YHGjQYwCwwM0e7aZSPK6gNBUF9Bp4BgxKU1ce3BfCLdkiUCXf8QZSqeoyTTHhQ0YThxkQpAhtWdOHTIq545IWezHqt8Yjmjm3ZpEJK4PDZeuQPsSSJ2eoB5vuTneb3HoB0h_8InfrOlqKnLwil2axPE5YVtWxaQQ\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/services/{{service_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"services",
+								"{{service_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Service",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/services/{{service_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"services",
+								"{{service_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tests",
+			"item": [
+				{
+					"name": "List Tests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/tests?service_id={{service_id}}&limit=10&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tests"
+							],
+							"query": [
+								{
+									"key": "service_id",
+									"value": "{{service_id}}"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Test",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"service_id\": \"{{service_id}}\",\n  \"name\": \"Get User Test\",\n  \"description\": \"Test to get user by ID\",\n  \"test_spec\": \"{\\\"name\\\":\\\"Get User Test\\\",\\\"description\\\":\\\"Test to get user by ID\\\",\\\"service_name\\\":\\\"user-service\\\",\\\"request\\\":{\\\"method\\\":\\\"GET\\\",\\\"url\\\":\\\"/users/1\\\",\\\"headers\\\":{\\\"Content-Type\\\":\\\"application/json\\\"}},\\\"assertions\\\":[{\\\"type\\\":\\\"status_code\\\",\\\"expected\\\":200},{\\\"type\\\":\\\"json_path\\\",\\\"path\\\":\\\"$.id\\\",\\\"matcher\\\":\\\"exists\\\"},{\\\"type\\\":\\\"json_path\\\",\\\"path\\\":\\\"$.name\\\",\\\"matcher\\\":\\\"equals\\\",\\\"expected\\\":\\\"Leanne Graham\\\"}]}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create POST Test",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"service_id\": \"{{service_id}}\",\n  \"name\": \"Create User Test\",\n  \"description\": \"Test to create a new user\",\n  \"test_spec\": \"{\\\"name\\\":\\\"Create User Test\\\",\\\"description\\\":\\\"Test to create a new user\\\",\\\"service_name\\\":\\\"user-service\\\",\\\"request\\\":{\\\"method\\\":\\\"POST\\\",\\\"url\\\":\\\"/users\\\",\\\"headers\\\":{\\\"Content-Type\\\":\\\"application/json\\\"},\\\"body\\\":{\\\"name\\\":\\\"Test User\\\",\\\"email\\\":\\\"test@example.com\\\",\\\"phone\\\":\\\"123-456-7890\\\"}},\\\"assertions\\\":[{\\\"type\\\":\\\"status_code\\\",\\\"expected\\\":201},{\\\"type\\\":\\\"json_path\\\",\\\"path\\\":\\\"$.id\\\",\\\"matcher\\\":\\\"exists\\\"},{\\\"type\\\":\\\"json_path\\\",\\\"path\\\":\\\"$.name\\\",\\\"matcher\\\":\\\"equals\\\",\\\"expected\\\":\\\"Test User\\\"}]}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Test from Curl",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"service_id\": \"{{service_id}}\",\n    \"name\": \"Encounter State By Alternate Visit Number\",\n    \"description\": \"Good Path Test of Encounter State By Alternate Visit Number\",\n    \"curl_command\": \"curl --location 'http://localhost:3001/get_encounter_state_by_alternate_visit_number/execute' --header 'Content-Type: application/json' --header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ4Y2FsaWJlci1oZWFsdGguc2VydmljZS1hY2NvdW50LmlkIjoiNTFmNjg5M2EtMmZkZi00NDE3LWEzODUtOGEzOTlmYWRjNWUzIiwieGNhbGliZXItaGVhbHRoLmFjY291bnQuaWQiOiI5MWI1YzdlMy02NmQxLTRiMGMtODRmZC0yYzZjYjVjZjgzZmMiLCJ4Y2FsaWJlci1oZWFsdGguaW5zdGFuY2UuaWQiOiI5MTcyNmQyOC1lY2QxLTM2ZGYtODEzMi02MjdhZTgwZmUzMzIiLCJ1c2VyIjp7InVzZXJJZCI6IjU5MTY4NGJlLWY5YzctNTI0Mi04Y2M0LTc2Yzk4NjYxMTgzMyIsInVzZXJOYW1lIjoiS2F1c3RhdiBLYXJhbiJ9LCJ4Y2FsaWJlci1oZWFsdGguc2NvcGVzIjpbIjkxNzI2ZDI4LWVjZDEtMzZkZi04MTMyLTYyN2FlODBmZTMzMi4qIl0sImNsYWltcyI6WyIqOioiXSwiZ3JhbnRUeXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwiaXNzdWVyVXJsIjoiaHR0cDovL2JsaXR6LnhjYWxpYmVyYXBpcy5jb20vYXBpL3YxL2F1dGgvdG9rZW5WMiIsImV4cGlyeUF0IjoiMjAyNi0wNi0zMCIsInhjYWxpYmVyLWhlYWx0aC50ZW5hbnQuaWQiOiI1MTJmZTE2Yi01N2NjLTM4ODctYjI4Zi04MjlmMjFhYTllZjIiLCJpYXQiOjE3NTM5NDg0ODMsImV4cCI6MTc4MjgwNjA4M30.YA34FxhSA3WvdDrMpU35X2wChSch5DhnKEt84Lt6svIRnf4zNalz8RcPPcVYUSgR7nYbZdGdYWQ3F7yZx9MobMvJJnqwgfxMxzMyYmCtPHMu4Rp6_hAU1hUnYwsch2XFY1VgSLgvDjoehZ8wlrnMICdKZL0CYCCxlfbblFbdBUG-81su2Hp435YHGjQYwCwwM0e7aZSPK6gNBUF9Bp4BgxKU1ce3BfCLdkiUCXf8QZSqeoyTTHhQ0YThxkQpAhtWdOHTIq545IWezHqt8Yjmjm3ZpEJK4PDZeuQPsSSJ2eoB5vuTneb3HoB0h_8InfrOlqKnLwil2axPE5YVtWxaQQ' --data '{\\\"alternate_visit_number\\\":\\\"096076481\\\"}'\",\n    \"assertions\": [\n        {\n            \"type\": \"status_code\",\n            \"value\": 201\n        },\n        {\n            \"path\": \"[0]\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].visit_number\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].visit_number\",\n            \"type\": \"equals\",\n            \"value\": \"10800050497\"\n        },\n        {\n            \"path\": \"[0].patient_class\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].patient_class\",\n            \"type\": \"equals\",\n            \"value\": \"OUTPATIENT\"\n        },\n        {\n            \"path\": \"[0].datetime\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].datetime\",\n            \"type\": \"equals\",\n            \"value\": \"2024-12-03 17:50:50\"\n        },\n        {\n            \"path\": \"[0].type\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].type\",\n            \"type\": \"equals\",\n            \"value\": \"A08\"\n        },\n        {\n            \"path\": \"[0].xc_visit_id\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].xc_visit_id\",\n            \"type\": \"equals\",\n            \"value\": \"096076481\"\n        },\n        {\n            \"path\": \"[0].servicing_facility\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].servicing_facility\",\n            \"type\": \"equals\",\n            \"value\": \"LKE\"\n        },\n        {\n            \"path\": \"[0].insurance\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].insurance[0]\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].insurance[0].insurance_company_id\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].insurance[0].insurance_company_id\",\n            \"type\": \"equals\",\n            \"value\": \"10001\"\n        },\n        {\n            \"path\": \"[0].insurance[0].id_type\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].insurance[0].id_type\",\n            \"type\": \"equals\",\n            \"value\": \"BLUE CROSS PPO TRUST\"\n        },\n        {\n            \"path\": \"[0].insurance[0].id_type_code\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].insurance[0].id_type_code\",\n            \"type\": \"equals\",\n            \"value\": \"10001011\"\n        },\n        {\n            \"path\": \"[0].alternate_visit_id\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].alternate_visit_id\",\n            \"type\": \"equals\",\n            \"value\": \"096076481\"\n        },\n        {\n            \"path\": \"[0].admit_datetime\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].admit_datetime\",\n            \"type\": \"equals\",\n            \"value\": \"2024-12-03 17:50:46\"\n        },\n        {\n            \"path\": \"[0].providers\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].providers[0]\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].providers[0].provider_type\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].providers[0].provider_type\",\n            \"type\": \"equals\",\n            \"value\": \"referrer\"\n        },\n        {\n            \"path\": \"[0].providers[0].provider_id\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].providers[0].provider_id\",\n            \"type\": \"equals\",\n            \"value\": \"1093712093\"\n        },\n        {\n            \"path\": \"[0].bedside_datetime\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].bedside_datetime\",\n            \"type\": \"equals\",\n            \"value\": \"2024-12-03 17:50:50\"\n        },\n        {\n            \"path\": \"[0].message_type\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].message_type\",\n            \"type\": \"equals\",\n            \"value\": \"ADT\"\n        },\n        {\n            \"path\": \"[0].facility\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].facility\",\n            \"type\": \"equals\",\n            \"value\": \"6a2ef1fb-2dc4-5671-b881-6bffb5820258\"\n        },\n        {\n            \"path\": \"[0].patient_id\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].patient_id\",\n            \"type\": \"equals\",\n            \"value\": \"6efad10a-c887-319c-81ca-c6cc0b38bcf2\"\n        },\n        {\n            \"path\": \"[0].bundle_id\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].bundle_id\",\n            \"type\": \"equals\",\n            \"value\": \"280B4CA2_ADT\"\n        },\n        {\n            \"path\": \"[0].hospital_service\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].hospital_service\",\n            \"type\": \"equals\",\n            \"value\": \"Not assigned.\"\n        },\n        {\n            \"path\": \"[0].facilities\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].facilities[0]\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].facilities[0].point_of_care\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].facilities[0].point_of_care\",\n            \"type\": \"equals\",\n            \"value\": \"1060170018:HFM:MOP LAB:PATHOLOGY\"\n        },\n        {\n            \"path\": \"[0].facilities[0].facility_type\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].facilities[0].facility_type\",\n            \"type\": \"equals\",\n            \"value\": \"Assigned Patient Location\"\n        },\n        {\n            \"path\": \"[0].facilities[0].facility_code\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].facilities[0].facility_code\",\n            \"type\": \"equals\",\n            \"value\": \"LKE\"\n        },\n        {\n            \"path\": \"[0].lineage\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].lineage\",\n            \"type\": \"equals\",\n            \"value\": \"HL7\"\n        },\n        {\n            \"path\": \"[0].batch_id\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].batch_id\",\n            \"type\": \"equals\",\n            \"value\": \"1c07837f-3a07-4e9c-b501-47f604034679\"\n        },\n        {\n            \"path\": \"[0].encounter_id\",\n            \"type\": \"exists\"\n        },\n        {\n            \"path\": \"[0].encounter_id\",\n            \"type\": \"equals\",\n            \"value\": \"84461ddb-b822-5946-bf23-ca0da343b1d3\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tests/from-curl",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tests",
+								"from-curl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/tests/{{test_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tests",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Test",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"service_id\": \"{{service_id}}\",\n  \"name\": \"Updated Get User Test\",\n  \"description\": \"Updated test to get user by ID\",\n  \"test_spec\": \"{\\\"name\\\":\\\"Updated Get User Test\\\",\\\"description\\\":\\\"Updated test to get user by ID\\\",\\\"service_name\\\":\\\"user-service\\\",\\\"request\\\":{\\\"method\\\":\\\"GET\\\",\\\"url\\\":\\\"/users/1\\\",\\\"headers\\\":{\\\"Content-Type\\\":\\\"application/json\\\"}},\\\"assertions\\\":[{\\\"type\\\":\\\"status_code\\\",\\\"expected\\\":200},{\\\"type\\\":\\\"json_path\\\",\\\"path\\\":\\\"$.id\\\",\\\"matcher\\\":\\\"exists\\\"}]}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tests/{{test_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tests",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Test",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/tests/{{test_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tests",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test Runs",
+			"item": [
+				{
+					"name": "Start Test Run",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"service_id\": \"{{service_id}}\",\n  \"test_ids\": [\"{{test_id}}\"],\n  \"name\": \"Test Run - {{$timestamp}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/test-runs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"test-runs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Test Run",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/test-runs/{{test_run_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"test-runs",
+								"{{test_run_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Test Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/test-runs/{{test_run_id}}/results",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"test-runs",
+								"{{test_run_id}}",
+								"results"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Test Runs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/test-runs?limit=10&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"test-runs"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "service_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_run_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
